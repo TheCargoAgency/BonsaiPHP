@@ -134,6 +134,8 @@ class Renderer
             return $internalNamespace . $process;
         }elseif(Registry::get('strict')){
             throw new BonsaiStrictException("Strict Standards: Cannot find $userNamespace$process or $internalNamespace$process");
+        }else{
+            Registry::log("Strict Standards: Cannot find $userNamespace$process or $internalNamespace$process", __FILE__, __METHOD__, __LINE__);
         }
         
         return false;

@@ -71,6 +71,7 @@ class ContentMapper
             if(Registry::get('strict')){
                 throw new BonsaiStrictException("Strict Standards: Field \$values['" . implode("']['", $route) . "'] not set.");
             }else{
+                Registry::log("Strict Standards: Field \$values['" . implode("']['", $route) . "'] not set.", __FILE__, __METHOD__, __LINE__);
                 $this->values[$field] = "-";
             }
             //$command = array();
@@ -119,6 +120,8 @@ class ContentMapper
             return $internalNamespace . $converter;
         }elseif(Registry::get('strict')){
             throw new BonsaiStrictException("Strict Standards: Cannot find $userNamespace$converter or $internalNamespace$converter");
+        }else{
+            Registry::log("Strict Standards: Cannot find $userNamespace$converter or $internalNamespace$converter", __FILE__, __METHOD__, __LINE__);
         }
         
         return false;

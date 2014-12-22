@@ -27,6 +27,7 @@ class Tools
             if (Registry::get('strict')){
                 throw new BonsaiStrictException("Strict Standards: $class not found");
             }else{
+                Registry::log("Strict Standards: $class not found", __FILE__, __METHOD__, __LINE__);
                 return false;
             }
         }
@@ -40,6 +41,7 @@ class Tools
         if (Registry::get('strict')){
             throw new BonsaiStrictException("Strict Standards: $class must implement the $interface interface");
         }else{
+            Registry::log("Strict Standards: $class must implement the $interface interface", __FILE__, __METHOD__, __LINE__);
             return false;
         }
     }
