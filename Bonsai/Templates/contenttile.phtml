@@ -1,0 +1,143 @@
+<?php
+    /** @jsonSchema
+     * {
+     *     "title":"Content Tile",
+     *     "type":"object",
+     *     "additionalProperties":false,
+     *     "properties":
+     *     {
+     *         "link":
+     *         {
+     *             "type":"string",
+     *             "title":"Link"
+     *         },
+     *         "title":
+     *         {
+     *             "type":"string",
+     *             "title":"Title"
+     *         },
+     *         "pseudo-title":
+     *         {
+     *             "type":"string",
+     *             "title":"Pseudo-Title"
+     *         },
+     *         "image":
+     *         {
+     *             "type":"string",
+     *             "title":"Image Name"
+     *         },
+     *         "background":
+     *         {
+     *             "type":"string",
+     *             "title":"Background Image"
+     *         },
+     *         "subtitle":
+     *         {
+     *             "type":"string",
+     *             "title":"Subtitle"
+     *         },
+     *         "content":
+     *         {
+     *             "type":"string",
+     *             "longtext":true,
+     *             "title":"Body"
+     *         },
+     *         "placeholder":
+     *         {
+     *             "type":"string",
+     *             "title":"Place Holder"
+     *         },
+     *         "button":
+     *         {
+     *             "type":"string",
+     *             "title":"Button Title"
+     *         },
+     *         "buttonlink":
+     *         {
+     *             "type":"string",
+     *             "title":"Button Link"
+     *         },
+     *         "callout":
+     *         {
+     *             "type":"string",
+     *             "title":"Callout"
+     *         },
+     *         "calloutlink":
+     *         {
+     *             "type":"string",
+     *             "title":"Callout Link"
+     *         },
+     *         "innerWrapper":
+     *         {
+     *             "type":"string",
+     *             "title":"Class for inner wrapper"
+     *         }
+     *     }
+     * }
+     */
+
+    /** @fileStructure
+     * {
+     *     "subfolders":
+     *     [
+     *         "image",
+     *         "thumb",
+     *         "misc",
+     *         "hero",
+     *         "background"
+     *     ]
+     * }
+     */
+
+    $wrappertag = empty($data->tag) ? 'div' : $data->tag;
+    $htop = empty($data->htop) ? 1 : $data->htop;
+
+    if (is_object($content)):
+
+    if (!isset($data->target) || !$data->target) {
+        $data->target = '_self';
+    }
+    
+    $image = $this->renderField($content, 'image', '<div class="image-wrapper'.$this->renderField($content, 'imageWrapperClass', ' %s').'"><img src="%s" ' . $this->getAttributes($content, ['alt' => 'imageAlt', 'class' => 'imageClass']) . '/></div>');
+    $imageposition = empty($data->imageposition) ? 2 : $data->imageposition;
+    
+?>
+
+<<?= $wrappertag . $this->getAttributes($data, ['id', 'class']) ?> <?= $this->getEditData($data)?>>
+    <?php
+        $innerclass = !empty($data->innerclass) ? " {$data->innerclass}" : '';
+        print empty($data->inner) ? "" : '<div class="inner clearfix' . $innerclass . '">';
+        $this->printField($content, 'innerWrapper', '<div class="%s">');
+        $this->printField($content, 'link', '<a href="%s" target="' . $data->target . '">');
+        print $imageposition == 1 ? $image : '';
+        $this->printField($content, 'title', "<h{$htop}" . $this->getAttributes($data, ['data-title']) . ">%s</h{$htop}>");
+        $this->printField($content, 'pseudo-title', '<p class="pseudo-h2">%s</p>');
+        print $imageposition == 2 ? $image : '';
+        $this->printField($content, 'subtitle', "<h" . ($htop+1) . ">%s</h" . ($htop+1) . ">");
+        print $imageposition == 3 ? $image : '';
+        $this->printField($content, 'content', '', 'AutoWrap', ['tag'=>'p']);
+        $this->printField($content, 'placeholder', '<div class="available-model-container">%s</div>');
+        print $imageposition == 4 ? $image : '';
+
+        $this->printField($content, ['buttonlink', 'button'], '<div class="button-wrapper"><a class="button" href="%s" target="_blank">%s</a></div>');
+
+        $this->printField($content, ['calloutlink', 'callout'], '<div class="callout-wrapper"><a class="callout" href="%s">%s</a></div>');
+
+        $this->printField($content, 'link', '</a>');
+        $this->printField($content, 'innerWrapper', '</div>');
+        
+        print empty($data->inner) ? "" : '</div>';
+    ?>
+</<?= $wrappertag ?>>
+
+<?php
+    else:
+?>
+
+<<?= $wrappertag ?> class="<?= $data->class; ?>">
+    <?= $content; ?>
+</<?= $wrappertag ?>>
+
+<?php
+    endif;
+?>
