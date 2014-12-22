@@ -2,6 +2,10 @@
 
 namespace Bonsai\Module;
 
+use Bonsai\Model\Query\Select;
+use Bonsai\Model\Query\Condition;
+use Bonsai\Exception\BonsaiException;
+
 /**
  * Registry for settings related to the Bonsai
  *
@@ -17,7 +21,10 @@ class Registry
     private $init = false;
 
     /** @var int */
-    public $locale = null;
+    private $localeID = null;
+
+    /** @var string */
+    private $localeStr = null;
 
     /** @var array */
     private $config;
@@ -57,14 +64,14 @@ class Registry
 
         $defaultConfigFile = \Bonsai\PROJECT_ROOT . '/' . self::DEFAULT_INI;
         if (!file_exists($defaultConfigFile)) {
-            throw new \Exception("Default Configuration for " . self::PROJECT_NAME . " not found.");
+            throw new BonsaiException("Default Configuration for " . self::PROJECT_NAME . " not found.");
         }
         $defaultConfig = parse_ini_file($defaultConfigFile);
 
         if (!empty($custom)) {
             $customConfigFile = \Bonsai\DOCUMENT_ROOT . '/' . $custom;
             if (!file_exists($customConfigFile)) {
-                throw new \Exception("Custom Configuration for " . self::PROJECT_NAME . " not found at $customConfigFile.");
+                throw new \BonsaiException("Custom Configuration for " . self::PROJECT_NAME . " not found at $customConfigFile.");
             }
             $customConfig = parse_ini_file($customConfigFile);
 
@@ -72,7 +79,7 @@ class Registry
         } else {
             $this->config = $defaultConfig;
         }
-
+        
         $this->init = true;
 
         return $this;
@@ -94,17 +101,44 @@ class Registry
 
     public function __set($name, $value)
     {
-        throw new \Exception("Configuration for " . self::PROJECT_NAME . " cannot be modified at runtime.");
+        throw new BonsaiException("Configuration for " . self::PROJECT_NAME . " cannot be modified at runtime.");
     }
 
     public function setLocale($locale)
     {
-        $this->locale = intval($locale);
+        $select = new Select();
+        
+        $columns = array(
+                self::get('locale.code'),
+            );
+        
+        $conditions = new Condition(self::get('locale.id'), $select->pdo('locale', intval($locale)));
+        
+        $select->columns($columns)
+                ->from(self::get('locale'))
+                ->where($conditions);
+        
+        $pdo = self::pdo();
+        
+        $stmt = $pdo->prepare($select);
+        $stmt->execute($select->getValues());
+        
+        if ($result = $stmt->fetch()){
+            $this->localeID = intval($locale);
+            $this->localeStr = $result['code'];
+        }else{
+            throw new BonsaiException("Specified locale ($locale) could not be located in the '" . self::get('locale') . "' table.");
+        }
     }
 
     public function getLocale()
     {
-        return $this->locale;
+        return $this->localeID;
+    }
+
+    public function getLocaleString()
+    {
+        return $this->localeStr;
     }
     
     public static function pdo(){

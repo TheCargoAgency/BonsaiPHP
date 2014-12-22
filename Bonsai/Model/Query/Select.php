@@ -149,7 +149,7 @@ class Select implements QueryType
         $columns = array();
         
         foreach ($this->columnset as $alias => $column){
-            if (intval($alias)){
+            if (is_numeric($alias)){
                 $columns[] = $column;
             }else{
                 $columns[] = $column . Query::ALIAS . $alias;
