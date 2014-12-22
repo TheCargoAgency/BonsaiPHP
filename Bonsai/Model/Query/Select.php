@@ -1,9 +1,9 @@
 <?php
 
-namespace Bonsai\Models\Query;
+namespace Bonsai\Model\Query;
 
-use Bonsai\Models\Query\Query;
-use Bonsai\Models\Query\QueryType;
+use Bonsai\Model\Query\Query;
+use Bonsai\Model\Query\QueryType;
 use Bonsai\Exception\QueryBuilderException;
 
 class Select implements QueryType
@@ -12,7 +12,7 @@ class Select implements QueryType
     private $pdoValues = array();
     private $fieldset;
     
-    /** $var Bonsai\Models\Query\ConditionInterface */
+    /** $var Bonsai\Model\Query\ConditionInterface */
     private $conditionset;
     private $group = array();
     private $order = array();

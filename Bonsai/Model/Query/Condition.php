@@ -1,9 +1,9 @@
 <?php
 
-namespace Bonsai\Models\Query;
+namespace Bonsai\Model\Query;
 
-use \Bonsai\Models\Query\Query;
-use \Bonsai\Models\Query\ConditionInterface;
+use \Bonsai\Model\Query\Query;
+use \Bonsai\Model\Query\ConditionInterface;
 use \Bonsai\Exception\QueryBuilderException;
 
 class Condition implements ConditionInterface

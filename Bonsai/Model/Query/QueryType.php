@@ -1,8 +1,8 @@
 <?php
 
-namespace Bonsai\Models\Query;
+namespace Bonsai\Model\Query;
 
-use \Bonsai\Models\Query\ConditionInterface;
+use \Bonsai\Model\Query\ConditionInterface;
 
 interface QueryType
 {

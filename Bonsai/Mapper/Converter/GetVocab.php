@@ -2,7 +2,7 @@
 
 namespace Bonsai\Mapper\Converter;
 
-use \Bonsai\Modules\Vocab;
+use \Bonsai\Module\Vocab;
 
 class GetVocab implements Converter
 {

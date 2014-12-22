@@ -1,8 +1,8 @@
 <?php
 
-namespace Bonsai;
+namespace Bonsai\Module;
 
-use Bonsai\Modules\Registry;
+use Bonsai\Module\Registry;
 
 class Callback
 {

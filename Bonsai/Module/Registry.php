@@ -1,6 +1,6 @@
 <?php
 
-namespace Bonsai\Modules;
+namespace Bonsai\Module;
 
 /**
  * Registry for settings related to the Bonsai
@@ -25,7 +25,7 @@ class Registry
     /** @var PDO */
     private $pdo;
     
-    /** @var Bonsai\Modules\Registry */
+    /** @var Bonsai\Module\Registry */
     static $instance = null;
 
     /**

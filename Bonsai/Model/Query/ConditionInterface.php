@@ -1,6 +1,6 @@
 <?php
 
-namespace Bonsai\Models\Query;
+namespace Bonsai\Model\Query;
 
 interface ConditionInterface
 {

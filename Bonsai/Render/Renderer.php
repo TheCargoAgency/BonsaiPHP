@@ -2,7 +2,7 @@
 
 namespace Bonsai\Render;
 
-use \Bonsai\Modules\Registry;
+use \Bonsai\Module\Registry;
 use \Bonsai\Tools;
 use \Bonsai\Exception\RenderException;
 use \Bonsai\Exception\BonsaiStrictException;
@@ -12,7 +12,7 @@ class Renderer
     const CONTENT_EDIT = 'bonsai-content';
     const NODE_EDIT = 'bonsai-node';
     const TEMPLATE_EXT = '.phtml';
-    const TEMPLATE_PATH = 'Templates';
+    const TEMPLATE_PATH = 'Template';
     
     public static function render($template, $content, $data){
         $renderer = new Renderer();

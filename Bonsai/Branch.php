@@ -6,9 +6,9 @@
 
 namespace Bonsai;
 
-use Bonsai\Callback;
-use Bonsai\Modules\Registry;
-use Bonsai\Models;
+use Bonsai\Module\Callback;
+use Bonsai\Module\Registry;
+use Bonsai\Model;
 use Bonsai\Render\Renderer;
 
 require_once __DIR__ . '/Bonsai.php';
@@ -42,8 +42,8 @@ class Branch extends Trunk
 
     /** @var string */
     protected $defaultconf = array(
-            'contentModelNamespace'   => '\\Bonsai\\Models\\',
-            'nodeModelNamespace'      => '\\Bonsai\\Models\\',
+            'contentModelNamespace'   => '\\Bonsai\\Model\\',
+            'nodeModelNamespace'      => '\\Bonsai\\Model\\',
             'contentModel'            => 'Content',
             'nodeModel'               => 'Node',
         );
@@ -62,7 +62,7 @@ class Branch extends Trunk
             return;
         }
         
-        $nodeModel = new Models\Node(Registry::pdo());
+        $nodeModel = new Model\Node(Registry::pdo());
 
         //fetch and process the children
         $children = $nodeModel->getChildren($nodeID);

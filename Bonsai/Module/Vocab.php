@@ -1,19 +1,19 @@
 <?php
 
-namespace Bonsai\Modules;
+namespace Bonsai\Module;
 
-use \Bonsai\Models\Query\Select;
-use \Bonsai\Models\Query\Query;
-use \Bonsai\Models\Query\Condition;
-use \Bonsai\Models\Query\ConditionSet;
-use \Bonsai\Modules\Registry;
+use \Bonsai\Model\Query\Select;
+use \Bonsai\Model\Query\Query;
+use \Bonsai\Model\Query\Condition;
+use \Bonsai\Model\Query\ConditionSet;
+use \Bonsai\Module\Registry;
 
 class Vocab {
     private $vocab = array();
     private $queries = 0;
     private $cached = 0;
     
-    /** @var \Bonsai\Modules\Vocab Self */
+    /** @var \Bonsai\Module\Vocab Self */
     private static $instance = null;
 
     private function __construct()

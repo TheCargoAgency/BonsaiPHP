@@ -3,13 +3,13 @@
  * Basic model for content access
  */
 
-namespace Bonsai\Models;
+namespace Bonsai\Model;
 
-use Bonsai\Modules\Registry;
-use Bonsai\Models\Query\Query;
-use Bonsai\Models\Query\Condition;
-use Bonsai\Models\Query\ConditionSet;
-use Bonsai\Models\Query\Select;
+use Bonsai\Module\Registry;
+use Bonsai\Model\Query\Query;
+use Bonsai\Model\Query\Condition;
+use Bonsai\Model\Query\ConditionSet;
+use Bonsai\Model\Query\Select;
 use PDO;
 
 /**

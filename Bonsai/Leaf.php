@@ -6,6 +6,9 @@
 
 namespace Bonsai;
 
+use Bonsai\Module\Registry;
+use Bonsai\Module\Callback;
+use Bonsai\Model;
 use Bonsai\Render\Renderer;
 
 require_once __DIR__ . '/Bonsai.php';
@@ -52,7 +55,7 @@ class Leaf extends Trunk
             return;
         }
         
-        $contentModel = new Models\Content(Registry::pdo());
+        $contentModel = new Model\Content(Registry::pdo());
 
         $content = $contentModel->getContent($nodeID, $contentOverride);
 

@@ -7,7 +7,7 @@
 namespace Bonsai\Mapper;
 
 use \Bonsai\Tools;
-use \Bonsai\Modules\Registry;
+use \Bonsai\Module\Registry;
 use \Bonsai\Exception\BonsaiStrictException;
 
 /**
