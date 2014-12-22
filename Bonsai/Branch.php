@@ -40,14 +40,6 @@ class Branch extends Trunk
     /** @var integer */
     protected $parentID;
 
-    /** @var string */
-    protected $defaultconf = array(
-        'contentModelNamespace' => '\\Bonsai\\Model\\',
-        'nodeModelNamespace' => '\\Bonsai\\Model\\',
-        'contentModel' => 'Content',
-        'nodeModel' => 'Node',
-    );
-
     /**
      * Construct the object, fetch child data and instantiate child classes
      *
