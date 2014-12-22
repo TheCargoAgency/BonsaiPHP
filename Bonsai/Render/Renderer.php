@@ -73,7 +73,7 @@ class Renderer
             if (!empty($data->$attr)) {
                 $attributes .= ' ';
                 $attributes .= !is_numeric($attrkey) ? $attrkey : $attr;
-                $attributes .= '="' . $data->$attr . '"'; // @todo - may want to escape attr value ???
+                $attributes .= '="' . htmlspecialchars($data->$attr) . '"';
             }
         }
 
