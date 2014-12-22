@@ -6,9 +6,10 @@ use \Bonsai\Tools;
 
 class Link implements Converter
 {
+
     protected $link;
-    
-    public function __construct($link='')
+
+    public function __construct($link = '')
     {
         $this->link = $link;
     }

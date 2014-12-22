@@ -10,9 +10,9 @@ class Tools
     public static function smartDump($variable, $die = false)
     {
         print '<pre>';
-        if (is_array($variable)){
+        if (is_array($variable)) {
             print_r($variable);
-        }else{
+        } else {
             var_dump($variable);
         }
         print '</pre>';
@@ -24,9 +24,9 @@ class Tools
     public static function class_implements($class, $interface)
     {
         if (!class_exists($class)) {
-            if (Registry::get('strict')){
+            if (Registry::get('strict')) {
                 throw new BonsaiStrictException("Strict Standards: $class not found");
-            }else{
+            } else {
                 Registry::log("Strict Standards: $class not found", __FILE__, __METHOD__, __LINE__);
                 return false;
             }
@@ -38,22 +38,23 @@ class Tools
             return true;
         }
 
-        if (Registry::get('strict')){
+        if (Registry::get('strict')) {
             throw new BonsaiStrictException("Strict Standards: $class must implement the $interface interface");
-        }else{
+        } else {
             Registry::log("Strict Standards: $class must implement the $interface interface", __FILE__, __METHOD__, __LINE__);
             return false;
         }
     }
 
-    public static function localizeURL($url){
-        if (substr($url, 0, 1) == "/" && substr($url, 0, 2) != "//"){
+    public static function localizeURL($url)
+    {
+        if (substr($url, 0, 1) == "/" && substr($url, 0, 2) != "//") {
             return \Bonsai\SERVER_ROOT . $url;
-        }else{
+        } else {
             return $url;
         }
     }
-    
+
     static public function slugify($text)
     {
         $text = str_replace('&', 'and', $text);
@@ -73,11 +74,11 @@ class Tools
         // remove unwanted characters
         $text = preg_replace('~[^-_\w]+~', '', $text);
 
-        if (empty($text))
-        {
+        if (empty($text)) {
             return 'n-a';
         }
 
         return $text;
     }
+
 }

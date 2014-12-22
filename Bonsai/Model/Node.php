@@ -15,16 +15,16 @@ use PDO;
 
 /**
  * Basic model for node-access
- * 
- * Loads nodes and their children 
- * 
+ *
+ * Loads nodes and their children
+ *
  */
 class Node
 {
 
     /** @var PDO */
     protected $pdo;
-    
+
     /**
      * Prepre the model for use
      * @param PDO $pdo
@@ -40,15 +40,15 @@ class Node
 
     /**
      * Fetch an array of parent and child data from the database
-     * 
+     *
      * @param   int    $node
-     * 
+     *
      * @return  array
      */
     public function getChildren($node)
     {
         $registry = Registry::getInstance();
-        
+
         $columns = array(
             'parent' => "pn.{$registry->get('node.id')}",
             'parentContentID' => "pn.{$registry->get('node.contentid')}",
@@ -57,7 +57,7 @@ class Node
             'renderer' => "pn.{$registry->get('node.renderer')}",
             'reference' => "pn.{$registry->get('node.reference')}",
             'data' => "pn.{$registry->get('node.renderdata')}",
-            'sort' => "nn.{$registry->get('nodetonode.sort')}",        
+            'sort' => "nn.{$registry->get('nodetonode.sort')}",
         );
 
         $select = Select::create()
@@ -65,7 +65,7 @@ class Node
                 ->join("{$registry->get('nodetonode')} nn", "nn.{$registry->get('nodetonode.parent')}", "pn.{$registry->get('node.id')}")
                 ->join("{$registry->get('node')} cn", "nn.{$registry->get('nodetonode.child')}", "cn.{$registry->get('node.id')}")
                 ->columns($columns);
-        
+
         if (is_numeric($node)) {
             $condition = new Condition("pn.{$registry->get('node.id')}", $select->pdo('node', intval($node)));
         } else {
@@ -77,7 +77,7 @@ class Node
 
         $stmt = $this->pdo->prepare($select);
         $stmt->execute($select->getValues());
-        
+
         return $stmt->fetchAll();
     }
 

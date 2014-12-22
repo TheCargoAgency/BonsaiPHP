@@ -34,7 +34,7 @@ class Registry
 
     /** @var PDO */
     private $pdo;
-    
+
     /** @var Bonsai\Module\Registry */
     static $instance = null;
 
@@ -82,7 +82,7 @@ class Registry
         } else {
             $this->config = $defaultConfig;
         }
-        
+
         $this->init = true;
 
         return $this;
@@ -110,26 +110,26 @@ class Registry
     public function setLocale($locale)
     {
         $select = new Select();
-        
+
         $columns = array(
-                self::get('locale.code'),
-            );
-        
+            self::get('locale.code'),
+        );
+
         $conditions = new Condition(self::get('locale.id'), $select->pdo('locale', intval($locale)));
-        
+
         $select->columns($columns)
                 ->from(self::get('locale'))
                 ->where($conditions);
-        
+
         $pdo = self::pdo();
-        
+
         $stmt = $pdo->prepare($select);
         $stmt->execute($select->getValues());
-        
-        if ($result = $stmt->fetch()){
+
+        if ($result = $stmt->fetch()) {
             $this->localeID = intval($locale);
             $this->localeStr = $result['code'];
-        }else{
+        } else {
             throw new BonsaiException("Specified locale ($locale) could not be located in the '" . self::get('locale') . "' table.");
         }
     }
@@ -143,36 +143,40 @@ class Registry
     {
         return $this->localeStr;
     }
-    
-    public static function pdo(){
+
+    public static function pdo()
+    {
         return self::getInstance()->getPDO();
     }
 
-    private function getPDO(){
-        if (isset($this->pdo)){
+    private function getPDO()
+    {
+        if (isset($this->pdo)) {
             return $this->pdo;
         }
-        
+
         $this->pdo = new \PDO($this->config['dns'], $this->config['username'], $this->config['passwd']);
-        
+
         return $this->pdo;
     }
-    
+
     public function addLog($message, $file, $method, $line)
     {
         $this->bonsaiLog[] = array(
-                'message' => $message,
-                'file' => $file,
-                'method' => $method,
-                'line' => $line,
-            );
+            'message' => $message,
+            'file' => $file,
+            'method' => $method,
+            'line' => $line,
+        );
     }
-    
-    public static function log($message, $file, $method, $line){
+
+    public static function log($message, $file, $method, $line)
+    {
         self::getInstance()->addLog($message, $file, $method, $line);
     }
-    
-    public static function getLog(){
+
+    public static function getLog()
+    {
         return self::getInstance()->bonsaiLog;
     }
 

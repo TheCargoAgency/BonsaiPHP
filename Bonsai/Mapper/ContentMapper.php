@@ -12,24 +12,25 @@ use \Bonsai\Exception\BonsaiStrictException;
 
 /**
  * ContentMapper allows formatted mapping of content to a named key in a string
- * 
+ *
  * Call Syntax:
  * {{<key>[::<converter>[::<param1>[::<param2>[::...]]]]}}
- * 
+ *
  * Examples:
  * {{field}} is replaced with $output in:
  * $output = $values['field']
- * 
+ *
  * {{field::Converter}} is replaced with $output in:
  * $converter = new Converter();
  * $output = $converter->convert($values['field']);
- * 
+ *
  * {{field::Converter::Param1::Param2}} is replaced with $output in:
  * $converter = new Converter('Param1', 'Param2');
  * $output = $converter->convert($values['field']);
  */
 class ContentMapper
 {
+
     protected $reservedKeys;
     protected $values = array();
     protected $formats = array();
@@ -62,25 +63,25 @@ class ContentMapper
         $route = explode('>', $field);
         $field = str_replace(">", "", $field);
 
-        if (count($route) == 2 && in_array($route[0], $this->reservedKeys)){
+        if (count($route) == 2 && in_array($route[0], $this->reservedKeys)) {
             $this->values[$route[0]][$route[1]] = $route[1];
         }
 
         //check if the data exists
         if (!$this->issetDeep($this->values, $route)) {
-            if(Registry::get('strict')){
+            if (Registry::get('strict')) {
                 throw new BonsaiStrictException("Strict Standards: Field \$values['" . implode("']['", $route) . "'] not set.");
-            }else{
+            } else {
                 Registry::log("Strict Standards: Field \$values['" . implode("']['", $route) . "'] not set.", __FILE__, __METHOD__, __LINE__);
                 $this->values[$field] = "-";
             }
             //$command = array();
-        }else{
+        } else {
             $this->values[$field] = isset($this->values[$field]) ? $this->values[$field] : $this->issetDeep($this->values, $route, true);
         }
 
         //check if a format exists, if not default to string
-        if (!isset($this->formats[$field])){
+        if (!isset($this->formats[$field])) {
             $this->formats[$field] = "%s";
         }
 
@@ -98,7 +99,7 @@ class ContentMapper
             }
         }
 
-        return sprintf($this->formats[$field],$output);
+        return sprintf($this->formats[$field], $output);
     }
 
     protected function replace($input, $field, $index, $length)
@@ -106,27 +107,28 @@ class ContentMapper
         return substr_replace($input, $field, $index, $length);
     }
 
-    public static function resolveConverter($converter){
-        if (empty($converter)){
+    public static function resolveConverter($converter)
+    {
+        if (empty($converter)) {
             return false;
         }
-        
+
         $userNamespace = Registry::get('converter');
         $internalNamespace = "\\Bonsai\\Mapper\\Converter\\";
-        
-        if (class_exists($userNamespace . $converter)){
+
+        if (class_exists($userNamespace . $converter)) {
             return $userNamespace . $converter;
-        }elseif (class_exists($internalNamespace . $converter)){
+        } elseif (class_exists($internalNamespace . $converter)) {
             return $internalNamespace . $converter;
-        }elseif(Registry::get('strict')){
+        } elseif (Registry::get('strict')) {
             throw new BonsaiStrictException("Strict Standards: Cannot find $userNamespace$converter or $internalNamespace$converter");
-        }else{
+        } else {
             Registry::log("Strict Standards: Cannot find $userNamespace$converter or $internalNamespace$converter", __FILE__, __METHOD__, __LINE__);
         }
-        
+
         return false;
     }
-    
+
     /**
      * Naviage into an array and check if the specified route exists
      *
@@ -140,8 +142,8 @@ class ContentMapper
      */
     public static function issetDeep($array, $route, $fetch = false)
     {
-        foreach ($route as $crossroad){
-            if (!isset($array[$crossroad])){
+        foreach ($route as $crossroad) {
+            if (!isset($array[$crossroad])) {
                 return false;
             }
 
@@ -158,7 +160,7 @@ class ContentMapper
         $xpath = new \DOMXPath($dom);
         $results = $xpath->query("//*[contains(@class, '$class')]");
 
-        foreach ($results as $result){
+        foreach ($results as $result) {
             $result->parentNode->removeChild($result);
         }
 

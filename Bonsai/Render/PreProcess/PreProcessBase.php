@@ -4,6 +4,7 @@ namespace Bonsai\Render\PreProcess;
 
 abstract class PreProcessBase implements PreProcess
 {
+
     protected $defaults = array();
     protected $args;
     protected $input;

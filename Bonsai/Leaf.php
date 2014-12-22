@@ -27,7 +27,7 @@ class Leaf extends Trunk
 
     /** @var boolean */
     protected $cache;
-    
+
     /** @var string */
     protected $cachedContent;
 
@@ -51,10 +51,10 @@ class Leaf extends Trunk
         $this->cache = Callback::Get('cacheOn') ? $cache : false;
         $this->cachedContent = $cache ? $this->getCachedContent($nodeID) : null;
 
-        if (!is_null($this->cachedContent)){
+        if (!is_null($this->cachedContent)) {
             return;
         }
-        
+
         $contentModel = new Model\Content(Registry::pdo());
 
         $content = $contentModel->getContent($nodeID, $contentOverride);
@@ -83,21 +83,21 @@ class Leaf extends Trunk
      */
     public function getContent($fieldsMap = [])
     {
-        if (!is_null($this->cachedContent)){
+        if (!is_null($this->cachedContent)) {
             return $this->cachedContent;
         }
-        
+
         $content = $this->isJSON($this->content) ? json_decode($this->content) : $this->content;
         if (count($fieldsMap) > 0) {
             $content = $this->remapObjectProperties($content, $fieldsMap);
         }
-        
+
         $output = Renderer::render($this->renderer, $content, $this->data);
-        
-        if ($this->cache){
+
+        if ($this->cache) {
             $this->cacheContent($output, $this->nodeID, $this->contentOverride);
         }
-        
+
         return $output;
     }
 
@@ -109,8 +109,8 @@ class Leaf extends Trunk
     public function getContentArray()
     {
         return $this->isJSON($this->content) ? json_decode($this->content, true) : false;
-    }    
-    
+    }
+
     /**
      * Remaps object properties according to input $fieldsMap,
      * where keys are initial property names and values are new property names.
@@ -146,9 +146,9 @@ class Leaf extends Trunk
         $tree['reference'] = $this->reference;
         $tree['contentref'] = $this->contentref;
 
-        if ($withContent){
+        if ($withContent) {
             $tree['content'] = $this->getContent();
-        }else{
+        } else {
             $tree['content'] = '';
         }
 
