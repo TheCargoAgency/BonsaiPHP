@@ -87,7 +87,7 @@ class Leaf extends Trunk
             return $this->cachedContent;
         }
         
-        $content = $this->isJSON($this->content) ? json_decode(utf8_encode($this->content)) : $this->content;
+        $content = $this->isJSON($this->content) ? json_decode($this->content) : $this->content;
         if (count($fieldsMap) > 0) {
             $content = $this->remapObjectProperties($content, $fieldsMap);
         }
@@ -108,7 +108,7 @@ class Leaf extends Trunk
      */
     public function getContentArray()
     {
-        return $this->isJSON($this->content) ? json_decode(utf8_encode($this->content), true) : false;
+        return $this->isJSON($this->content) ? json_decode($this->content, true) : false;
     }    
     
     /**
