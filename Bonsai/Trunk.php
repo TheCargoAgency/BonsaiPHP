@@ -109,7 +109,7 @@ abstract class Trunk implements Tree
     
     public static function isJSON($string)
     {
-        json_decode(utf8_encode($string));
+        json_decode($string);
         return (json_last_error() == JSON_ERROR_NONE);
     }
 
