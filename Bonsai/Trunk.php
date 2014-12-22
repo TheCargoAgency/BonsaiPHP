@@ -6,6 +6,7 @@
 
 namespace Bonsai;
 
+use Bonsai\Module\Registry;
 use Bonsai\Module\Callback;
 use Bonsai\Render\Renderer;
 use Bonsai\Permissions;
@@ -77,7 +78,7 @@ abstract class Trunk implements Tree
     protected function getCachePath($nodeID, $contentID = null)
     {
         $cachePath = \Bonsai\DOCUMENT_ROOT . Registry::get('CacheLocation');
-        $cachePath .= '';
+        $cachePath .= Registry::getInstance()->getLocaleString() . '/';
         $cachePath .= 'node/';
         $cachePath .= $this->getCachePathComponent($nodeID);
         if (!empty($contentID)){
@@ -100,7 +101,6 @@ abstract class Trunk implements Tree
     protected function getCachePathComponent($id)
     {
         $id = strrev(strval($id));
-        //$id = strlen($id) % 2 ? $id . '0' : $id;
         $id = str_split($id, 2);
         $id = implode('/', $id) . '/';
         
