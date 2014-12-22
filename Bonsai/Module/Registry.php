@@ -29,6 +29,9 @@ class Registry
     /** @var array */
     private $config;
 
+    /** @var array */
+    private $bonsaiLog = array();
+
     /** @var PDO */
     private $pdo;
     
@@ -153,6 +156,24 @@ class Registry
         $this->pdo = new \PDO($this->config['dns'], $this->config['username'], $this->config['passwd']);
         
         return $this->pdo;
+    }
+    
+    public function addLog($message, $file, $method, $line)
+    {
+        $this->bonsaiLog[] = array(
+                'message' => $message,
+                'file' => $file,
+                'method' => $method,
+                'line' => $line,
+            );
+    }
+    
+    public static function log($message, $file, $method, $line){
+        self::getInstance()->addLog($message, $file, $method, $line);
+    }
+    
+    public static function getLog(){
+        return self::getInstance()->bonsaiLog;
     }
 
     /**

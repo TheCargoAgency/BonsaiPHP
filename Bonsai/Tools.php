@@ -52,13 +52,6 @@ class Tools
         }
     }
     
-    public static function localLog($type, $message){
-        if (getenv("APPLICATION_ENV") == 'local' && class_exists('FB')){
-            // @todo - getting errors where class FB isn't found, so disabling for now
-            // FB::$type($message);
-        }
-    }
-
     static public function slugify($text)
     {
         $text = str_replace('&', 'and', $text);
