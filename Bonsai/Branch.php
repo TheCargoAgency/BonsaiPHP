@@ -40,12 +40,15 @@ class Branch extends Trunk
     /** @var integer */
     protected $parentID;
 
+    /** @var \Bonsai\Render\Renderer */
+    protected $bonsaiRenderer;
+    
     /**
      * Construct the object, fetch child data and instantiate child classes
      *
      * @param int $nodeID
      */
-    public function __construct($nodeID, $cache = true)
+    public function __construct($nodeID, $cache = true, \Bonsai\Render\Renderer $renderer = null)
     {
         $this->cache = Callback::Get('cacheOn') ? $cache : false;
         $this->cachedContent = $cache ? $this->getCachedContent($nodeID) : null;
@@ -54,6 +57,8 @@ class Branch extends Trunk
             return;
         }
 
+        $this->bonsaiRenderer = empty($renderer) ? new Renderer() : $renderer;
+        
         $nodeModel = new Model\Node(Registry::pdo());
 
         //fetch and process the children
@@ -84,15 +89,15 @@ class Branch extends Trunk
         foreach ($children as $child) {
             //if contentid is non-zero, child is a leaf
             if ($child['contentID']) {
-                $this->children[] = new Leaf($child['child'], false, false);
+                $this->children[] = new Leaf($child['child'], false, false, $this->bonsaiRenderer);
                 //if requested id has no children, set renderer to null and load as leaf
             } elseif (is_null($child['contentID'])) {
                 $this->parentID = $child['parentContentID'];
                 $child['renderer'] = null;
-                $this->children[] = new Leaf($child['parent'], false, false);
+                $this->children[] = new Leaf($child['parent'], false, false, $this->bonsaiRenderer);
                 //otherwise child is a node
             } else {
-                $this->children[] = new Node($child['child'], false);
+                $this->children[] = new Node($child['child'], false, $this->bonsaiRenderer);
             }
         }
     }
@@ -125,7 +130,7 @@ class Branch extends Trunk
             return '';
         }
 
-        $output = Renderer::render($this->renderer, $content, $this->data);
+        $output = $this->bonsaiRenderer->renderContent($this->renderer, $content, $this->data);
 
         if ($this->cache) {
             $this->cacheContent($output, $this->nodeID);

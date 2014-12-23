@@ -40,13 +40,16 @@ class Leaf extends Trunk
     /** @var integer */
     protected $contentOverride;
 
+    /** @var \Bonsai\Render\Renderer */
+    protected $bonsaiRenderer;
+
     /**
      * Construct the object, fetch child data and instantiate child classes
      *
      * @param int $nodeID
      * @param int|bool $contentOvverride
      */
-    public function __construct($nodeID, $contentOverride = false, $cache = true)
+    public function __construct($nodeID, $contentOverride = false, $cache = true, \Bonsai\Render\Renderer $renderer = null)
     {
         $this->cache = Callback::Get('cacheOn') ? $cache : false;
         $this->cachedContent = $cache ? $this->getCachedContent($nodeID) : null;
@@ -55,6 +58,8 @@ class Leaf extends Trunk
             return;
         }
 
+        $this->bonsaiRenderer = empty($renderer) ? new Renderer() : $renderer;
+        
         $contentModel = new Model\Content(Registry::pdo());
 
         $content = $contentModel->getContent($nodeID, $contentOverride);
