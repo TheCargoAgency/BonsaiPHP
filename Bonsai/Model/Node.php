@@ -7,9 +7,7 @@
 namespace Bonsai\Model;
 
 use Bonsai\Module\Registry;
-use Bonsai\Model\Query\Query;
 use Bonsai\Model\Query\Condition;
-use Bonsai\Model\Query\ConditionSet;
 use Bonsai\Model\Query\Select;
 use PDO;
 
@@ -33,11 +31,35 @@ class Node
     {
         $this->pdo = $pdo;
 
-        if (!empty(Registry::getInstance()->getLocale())) {
-            $this->locale = Registry::getInstance()->getLocale();
-        }
     }
 
+    public static function getNodeId($nodeReference){
+        $registry = Registry::getInstance();
+
+        $columns = array(
+            'id' => "{$registry->get('node.id')}",
+        );
+
+        $select = Select::create()
+                ->from("{$registry->get('node')}")
+                ->columns($columns);
+
+        $condition = new Condition("{$registry->get('node.reference')}", $select->pdo('node', $nodeReference));
+
+        $select->where($condition);
+
+        $pdo = $registry->pdo();
+        
+        $stmt = $pdo->prepare($select);
+        $stmt->execute($select->getValues());
+
+        if($result = $stmt->fetch()){
+            return $result['id'];
+        }else{
+            return null;
+        }
+    }
+    
     /**
      * Fetch an array of parent and child data from the database
      *
