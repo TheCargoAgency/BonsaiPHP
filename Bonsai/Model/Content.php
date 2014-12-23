@@ -38,7 +38,6 @@ class Content
             $this->locale = Registry::getInstance()->getLocale();
         }
 
-        return $this;
     }
 
     /**
