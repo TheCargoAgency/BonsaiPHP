@@ -14,7 +14,8 @@ use Bonsai\Exception\BonsaiException;
 class Registry
 {
 
-    const DEFAULT_INI = "inc/config.ini";
+    const DEFAULT_INI = "Config/config.ini";
+    const PROJECT_NAMESPACE = "Bonsai";
     const PROJECT_NAME = "Bonsai";
 
     /** @var boolean */
@@ -65,16 +66,16 @@ class Registry
             return $this;
         }
 
-        $defaultConfigFile = \Bonsai\PROJECT_ROOT . '/' . self::DEFAULT_INI;
+        $defaultConfigFile = constant(self::PROJECT_NAMESPACE . "\\PROJECT_ROOT") . '/' . self::DEFAULT_INI;
         if (!file_exists($defaultConfigFile)) {
             throw new BonsaiException("Default Configuration for " . self::PROJECT_NAME . " not found.");
         }
         $defaultConfig = parse_ini_file($defaultConfigFile);
 
         if (!empty($custom)) {
-            $customConfigFile = \Bonsai\DOCUMENT_ROOT . '/' . $custom;
+            $customConfigFile = constant(self::PROJECT_NAMESPACE . "\\DOCUMENT_ROOT") . '/' . $custom;
             if (!file_exists($customConfigFile)) {
-                throw new \BonsaiException("Custom Configuration for " . self::PROJECT_NAME . " not found at $customConfigFile.");
+                throw new BonsaiException("Custom Configuration for " . self::PROJECT_NAME . " not found at $customConfigFile.");
             }
             $customConfig = parse_ini_file($customConfigFile);
 
