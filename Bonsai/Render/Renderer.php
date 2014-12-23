@@ -15,6 +15,13 @@ class Renderer
     const TEMPLATE_EXT = '.phtml';
     const TEMPLATE_PATH = 'Template';
 
+    public $plugins = array();
+
+    public function __construct()
+    {
+        $this->fetchPlugins();
+    }
+
     public static function render($template, $content, $data)
     {
         $renderer = new Renderer();
@@ -32,21 +39,26 @@ class Renderer
         return $this->partial($file, $content, $data);
     }
 
-    public static function getRenderFile($basename)
+    public function getRenderFile($basename)
     {
-        $file = $basename . self::TEMPLATE_EXT;
-        $defaultFile = Registry::get('defaultTemplate') . self::TEMPLATE_EXT;
-        $userTemplates = \Bonsai\DOCUMENT_ROOT . '/' . Registry::get('renderTemplateLocation') . '/';
-        $internalTemplates = \Bonsai\PROJECT_ROOT . '/' . self::TEMPLATE_PATH . '/';
+        $files = array();
+        $templates = array();
 
-        if (file_exists("$userTemplates$file")) {
-            return "$userTemplates$file";
-        } elseif (file_exists("$internalTemplates$file")) {
-            return "$internalTemplates$file";
-        } elseif (file_exists("$userTemplates$defaultFile")) {
-            return "$userTemplates$defaultFile";
-        } elseif (file_exists("$internalTemplates$defaultFile")) {
-            return "$internalTemplates$defaultFile";
+        $files[] = $basename . self::TEMPLATE_EXT;
+        $files[] = Registry::get('defaultTemplate') . self::TEMPLATE_EXT;
+
+        $templates[] = \Bonsai\DOCUMENT_ROOT . '/' . Registry::get('renderTemplateLocation') . '/';
+        
+        self::fetchPluginTemplates($templates);
+        
+        $templates[] = \Bonsai\PROJECT_ROOT . '/' . self::TEMPLATE_PATH . '/';
+
+        foreach ($files as $file) {
+            foreach ($templates as $template) {
+                if (file_exists("$template$file")) {
+                    return "$template$file";
+                }
+            }
         }
 
         throw new \Bonsai\Exception\RenderException("Fallback to default template failed: $internalTemplates$defaultFile not found.");
@@ -84,12 +96,12 @@ class Renderer
         return $attributes;
     }
 
-    public static function printField($data, $properties, $format = '', $process = '', $processargs = array())
+    public function printField($data, $properties, $format = '', $process = '', $processargs = array())
     {
-        print self::renderField($data, $properties, $format, $process, $processargs);
+        print $this->renderField($data, $properties, $format, $process, $processargs);
     }
 
-    public static function renderField($data, $properties, $format = '', $process = '', $processargs = array())
+    public function renderField($data, $properties, $format = '', $process = '', $processargs = array())
     {
         if (empty($data)) {
             return '';
@@ -101,8 +113,7 @@ class Renderer
             $properties = array($properties);
         }
 
-        $process = self::resolvePreprocessor($process);
-        print $process . PHP_EOL;
+        $process = $this->resolvePreprocessor($process);
 
         foreach ($properties as $propertyKey => $property) {
             if (empty($data->$property)) {
@@ -125,7 +136,7 @@ class Renderer
         return call_user_func_array('sprintf', $args);
     }
 
-    public static function resolvePreprocessor($process)
+    protected function resolvePreprocessor($process)
     {
         if (empty($process)) {
             return false;
@@ -145,6 +156,40 @@ class Renderer
         }
 
         return false;
+    }
+
+    public function fetchPlugins()
+    {
+        $plugins = Registry::get('plugin');
+        if (!empty($plugins)) {
+            if (!is_array($plugins)) {
+                $plugins = [$plugins];
+            }
+
+            foreach ($plugins as $plugin) {
+                if (class_exists('\\' . $plugin . '\\Module\\Registry')) {
+                    $registry = $plugin . '\\Module\\Registry';
+                    $this->plugins[$plugin] = $registry::getInstance();
+                }
+            }
+
+        }
+    }
+    
+    protected function fetchPluginTemplates(&$templates)
+    {
+        $renderer = new Renderer();
+        
+        foreach ($renderer->plugins as $pluginNamespace => $plugin){
+            $authorizedRenderers = $plugin->renderTemplate;
+            if(is_array($authorizedRenderers)){
+                if (in_array(get_class($this), $authorizedRenderers)){
+                    $templates[] = constant($pluginNamespace . '\\PROJECT_ROOT') . '/' . $plugin->renderTemplateLocation . '/';
+                }
+            }else{
+                $templates[] = constant($pluginNamespace . '\\PROJECT_ROOT') . '/' . $plugin->renderTemplateLocation . '/';
+            }
+        }
     }
 
 }
