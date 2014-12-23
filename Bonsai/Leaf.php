@@ -78,21 +78,17 @@ class Leaf extends Trunk
     /**
      * Access view and render content
      *
-     * @param array $fieldsMap (array that remaps new content fields to initial one, keys are initial content fields, values are new content fields)
      * @return string
      */
-    public function getContent($fieldsMap = [])
+    public function getContent()
     {
         if (!is_null($this->cachedContent)) {
             return $this->cachedContent;
         }
 
         $content = $this->isJSON($this->content) ? json_decode($this->content) : $this->content;
-        if (count($fieldsMap) > 0) {
-            $content = $this->remapObjectProperties($content, $fieldsMap);
-        }
 
-        $output = Renderer::render($this->renderer, $content, $this->data);
+        $output = $this->bonsaiRenderer->renderContent($this->renderer, $content, $this->data);
 
         if ($this->cache) {
             $this->cacheContent($output, $this->nodeID, $this->contentOverride);
@@ -109,27 +105,6 @@ class Leaf extends Trunk
     public function getContentArray()
     {
         return $this->isJSON($this->content) ? json_decode($this->content, true) : false;
-    }
-
-    /**
-     * Remaps object properties according to input $fieldsMap,
-     * where keys are initial property names and values are new property names.
-     * It also unsets properties with new values = null.
-     *
-     * @param array $fieldsMap
-     * @return array
-     */
-    private function remapObjectProperties($object, $fieldsMap)
-    {
-        foreach ($fieldsMap as $initialFieldName => $newFieldName) {
-            if (isset($object->$initialFieldName)) {
-                if (null !== $newFieldName) {
-                    $object->$newFieldName = $object->$initialFieldName;
-                }
-                unset($object->$initialFieldName);
-            }
-        }
-        return $object;
     }
 
     /**
