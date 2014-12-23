@@ -14,7 +14,7 @@ use Bonsai\Permissions;
 require_once __DIR__ . '/Bonsai.php';
 
 /**
- * Tree Base class
+ * Bonsai Tree Base class
  */
 abstract class Trunk implements Tree
 {
@@ -56,8 +56,24 @@ abstract class Trunk implements Tree
         return $data;
     }
 
+    /**
+     * 
+     * 
+     * @param   integer|string   $nodeID
+     * @param   integer   $contentID
+     * 
+     * @return  string
+     */
     protected function getCachedContent($nodeID, $contentID = null)
     {
+        if (!is_int($nodeID)){
+            $model = new Model\Node(Registry::pdo());
+            $nodeID = $model->getNodeId($nodeID);
+            if (is_null($nodeID)){
+                return null;
+            }
+        }
+        
         $cachePath = $this->getCachePath($nodeID, $contentID);
         $cachePath .= $this->getCacheFileName($nodeID, $contentID);
 
