@@ -47,6 +47,8 @@ class Branch extends Trunk
      * Construct the object, fetch child data and instantiate child classes
      *
      * @param int $nodeID
+     * @param type $cache
+     * @param Renderer $renderer
      */
     public function __construct($nodeID, $cache = true, \Bonsai\Render\Renderer $renderer = null)
     {
@@ -67,7 +69,7 @@ class Branch extends Trunk
         //if the node does not exist, create a null node.
         if (count($children) == 0 && !Registry::get('autoPrune')) {
             $this->buildNullNode();
-            return false;
+            return;
         }
 
         $this->addChildren($children);

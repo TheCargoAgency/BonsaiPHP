@@ -2,7 +2,7 @@
 
 namespace Bonsai\Mapper\Converter;
 
-use \Bonsai\Tools;
+use \Bonsai\Module\Tools;
 
 class Link implements Converter
 {

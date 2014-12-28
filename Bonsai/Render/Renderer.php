@@ -3,7 +3,7 @@
 namespace Bonsai\Render;
 
 use \Bonsai\Module\Registry;
-use \Bonsai\Tools;
+use \Bonsai\Module\Tools;
 use \Bonsai\Exception\RenderException;
 use \Bonsai\Exception\BonsaiStrictException;
 

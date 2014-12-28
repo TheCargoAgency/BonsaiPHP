@@ -1,6 +1,6 @@
 <?php
 
-namespace Bonsai;
+namespace Bonsai\Module;
 
 use \Bonsai\Exception\BonsaiStrictException;
 
