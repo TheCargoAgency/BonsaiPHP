@@ -173,6 +173,10 @@ class Registry
 
     public static function log($message, $file, $method, $line)
     {
+        if (self::get('strict')) {
+            throw new \Bonsai\Module\BonsaiStrictException($message);
+        }
+        
         self::getInstance()->addLog($message, $file, $method, $line);
     }
 

@@ -24,12 +24,8 @@ class Tools
     public static function class_implements($class, $interface)
     {
         if (!class_exists($class)) {
-            if (Registry::get('strict')) {
-                throw new BonsaiStrictException("Strict Standards: $class not found");
-            } else {
-                Registry::log("Strict Standards: $class not found", __FILE__, __METHOD__, __LINE__);
-                return false;
-            }
+            Registry::log("Strict Standards: $class not found", __FILE__, __METHOD__, __LINE__);
+            return false;
         }
 
         $interfaces = class_implements($class);
@@ -38,12 +34,8 @@ class Tools
             return true;
         }
 
-        if (Registry::get('strict')) {
-            throw new BonsaiStrictException("Strict Standards: $class must implement the $interface interface");
-        } else {
-            Registry::log("Strict Standards: $class must implement the $interface interface", __FILE__, __METHOD__, __LINE__);
-            return false;
-        }
+        Registry::log("Strict Standards: $class must implement the $interface interface", __FILE__, __METHOD__, __LINE__);
+        return false;
     }
 
     public static function localizeURL($url)

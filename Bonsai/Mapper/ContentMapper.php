@@ -69,12 +69,8 @@ class ContentMapper
 
         //check if the data exists
         if (!$this->issetDeep($this->values, $route)) {
-            if (Registry::get('strict')) {
-                throw new BonsaiStrictException("Strict Standards: Field \$values['" . implode("']['", $route) . "'] not set.");
-            } else {
-                Registry::log("Strict Standards: Field \$values['" . implode("']['", $route) . "'] not set.", __FILE__, __METHOD__, __LINE__);
-                $this->values[$field] = "-";
-            }
+            Registry::log("Strict Standards: Field \$values['" . implode("']['", $route) . "'] not set.", __FILE__, __METHOD__, __LINE__);
+            $this->values[$field] = "-";
             //$command = array();
         } else {
             $this->values[$field] = isset($this->values[$field]) ? $this->values[$field] : $this->issetDeep($this->values, $route, true);
@@ -120,8 +116,6 @@ class ContentMapper
             return $userNamespace . $converter;
         } elseif (class_exists($internalNamespace . $converter)) {
             return $internalNamespace . $converter;
-        } elseif (Registry::get('strict')) {
-            throw new BonsaiStrictException("Strict Standards: Cannot find $userNamespace$converter or $internalNamespace$converter");
         } else {
             Registry::log("Strict Standards: Cannot find $userNamespace$converter or $internalNamespace$converter", __FILE__, __METHOD__, __LINE__);
         }
