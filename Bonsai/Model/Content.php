@@ -53,7 +53,7 @@ class Content
         $registry = Registry::getInstance();
 
         $columns = array(
-            'renderer' => "n.{$registry->get('node.renderer')}",
+            'template' => "n.{$registry->get('node.template')}",
             'reference' => "n.{$registry->get('node.reference')}",
             'data' => "n.{$registry->get('node.renderdata')}",
             'contentref' => "cr.{$registry->get('contentRegistry.reference')}",

@@ -20,7 +20,7 @@ class Branch extends Trunk
 {
 
     /** @var string */
-    protected $renderer;
+    protected $template;
 
     /** @var tree[] */
     protected $children = array();
@@ -41,7 +41,7 @@ class Branch extends Trunk
     protected $parentID;
 
     /** @var \Bonsai\Render\Renderer */
-    protected $bonsaiRenderer;
+    protected $renderer;
     
     /**
      * Construct the object, fetch child data and instantiate child classes
@@ -59,7 +59,7 @@ class Branch extends Trunk
             return;
         }
 
-        $this->bonsaiRenderer = empty($renderer) ? new Renderer() : $renderer;
+        $this->renderer = empty($renderer) ? new Renderer() : $renderer;
         
         $nodeModel = new Model\Node(Registry::pdo());
 
@@ -78,7 +78,7 @@ class Branch extends Trunk
 
     protected function buildNullNode()
     {
-        $this->renderer = "div";
+        $this->template = "div";
         $this->reference = Registry::get('nullContent');
         $data = new \stdClass();
         $data->class = $this->reference;
@@ -91,22 +91,22 @@ class Branch extends Trunk
         foreach ($children as $child) {
             //if contentid is non-zero, child is a leaf
             if ($child['contentID']) {
-                $this->children[] = new Leaf($child['child'], false, false, $this->bonsaiRenderer);
+                $this->children[] = new Leaf($child['child'], false, false, $this->renderer);
                 //if requested id has no children, set renderer to null and load as leaf
             } elseif (is_null($child['contentID'])) {
                 $this->parentID = $child['parentContentID'];
-                $child['renderer'] = null;
-                $this->children[] = new Leaf($child['parent'], false, false, $this->bonsaiRenderer);
+                $child['template'] = null;
+                $this->children[] = new Leaf($child['parent'], false, false, $this->renderer);
                 //otherwise child is a node
             } else {
-                $this->children[] = new Node($child['child'], false, $this->bonsaiRenderer);
+                $this->children[] = new Node($child['child'], false, $this->renderer);
             }
         }
     }
 
     protected function registerViewData($child)
     {
-        $this->renderer = $child['renderer'];
+        $this->template = $child['template'];
         $this->reference = $child['reference'];
         $this->data = $this->getData($child);
         $this->nodeID = $child['parent'];
@@ -132,7 +132,7 @@ class Branch extends Trunk
             return '';
         }
 
-        $output = $this->bonsaiRenderer->renderContent($this->renderer, $content, $this->data);
+        $output = $this->renderer->renderContent($this->renderer, $content, $this->data);
 
         if ($this->cache) {
             $this->cacheContent($output, $this->nodeID);
@@ -156,12 +156,12 @@ class Branch extends Trunk
         $tree['content'] = array();
 
         foreach ($this->children as $child) {
-            if (!is_null($this->renderer) || $this->parentID !== 0) {
+            if (!is_null($this->template) || $this->parentID !== 0) {
                 $tree['content'][count($tree['content']) + 1] = $child->getTreeArray($withContent);
             }
         }
 
-        return !is_null($this->renderer) || !isset($tree['content'][1]) ? $tree : $tree['content'][1];
+        return !is_null($this->template) || !isset($tree['content'][1]) ? $tree : $tree['content'][1];
     }
 
     /**

@@ -20,7 +20,7 @@ class Leaf extends Trunk
 {
 
     /** @var string */
-    protected $renderer;
+    protected $template;
 
     /** @var tree[] */
     protected $content;
@@ -41,7 +41,7 @@ class Leaf extends Trunk
     protected $contentOverride;
 
     /** @var \Bonsai\Render\Renderer */
-    protected $bonsaiRenderer;
+    protected $renderer;
 
     /**
      * Construct the object, fetch child data and instantiate child classes
@@ -58,7 +58,7 @@ class Leaf extends Trunk
             return;
         }
 
-        $this->bonsaiRenderer = empty($renderer) ? new Renderer() : $renderer;
+        $this->renderer = empty($renderer) ? new Renderer() : $renderer;
         
         $contentModel = new Model\Content(Registry::pdo());
 
@@ -68,7 +68,7 @@ class Leaf extends Trunk
         $this->contentOverride = $contentOverride;
         $this->reference = $content['reference'];
         $this->contentref = $content['contentref'];
-        $this->renderer = $content['renderer'];
+        $this->template = $content['template'];
         $this->contentid = $content['contentid'];
         $this->content = $content['content'];
         $this->data = $this->getData($content);
@@ -93,7 +93,7 @@ class Leaf extends Trunk
 
         $content = $this->isJSON($this->content) ? json_decode($this->content) : $this->content;
 
-        $output = $this->bonsaiRenderer->renderContent($this->renderer, $content, $this->data);
+        $output = $this->renderer->renderContent($this->template, $content, $this->data);
 
         if ($this->cache) {
             $this->cacheContent($output, $this->nodeID, $this->contentOverride);

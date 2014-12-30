@@ -76,7 +76,7 @@ class Node
             'parentContentID' => "pn.{$registry->get('node.contentid')}",
             'contentID' => "cn.{$registry->get('node.contentid')}",
             'child' => "cn.{$registry->get('node.id')}",
-            'renderer' => "pn.{$registry->get('node.renderer')}",
+            'template' => "pn.{$registry->get('node.template')}",
             'reference' => "pn.{$registry->get('node.reference')}",
             'data' => "pn.{$registry->get('node.renderdata')}",
             'sort' => "nn.{$registry->get('nodetonode.sort')}",
