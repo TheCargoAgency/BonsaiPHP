@@ -3,6 +3,9 @@
 \usepackage[T1]{fontenc}
 \usepackage[top=1in, bottom=1.5in, left=1in, right=1in]{geometry}
 
+\usepackage[english]{babel}
+\usepackage[autostyle]{csquotes}
+
 \usepackage{indentfirst}
 \usepackage{float}
 
@@ -133,7 +136,7 @@ The content table shares a many-to-one relationship with the contentRegistry tab
 
 \subsection{Locale Table}
 
-The locale table stores the basic information about each locale you intend to use for your content. The first key (0) in installed by the \nameref{sec:dbinit} and is 'no-ne' and is the catch-all default locale, this is used if you don't set a locale on your project. It is recommended that you use one of the standard locale formats for this code to promote easier use.
+The locale table stores the basic information about each locale you intend to use for your content. The first key (0) in installed by the \nameref{sec:dbinit} and is \enquote{no-ne} and is the catch-all default locale, this is used if you don't set a locale on your project. It is recommended that you use one of the standard locale formats for this code to promote easier use.
 
 The title and sort fields are not specifically used in the Bonsai Core, though they are used by some plugins. They are also useful if you want to dynamically populate your locale switcher.
 
@@ -209,7 +212,56 @@ Content Categories work much like Content Types, except that they have no bearin
 
 The node tables organize the content into a structure that can be retrieved and manipulated.
 
+\subsection{Node Table}
 
+The node table contains information about each individual branch and leaf available for use on the site.  Each one references a render template that will be used for building the HTML output of a tree. Nodes which contain other nodes should have a contentID of \enquote{0}. If the contentID is set to a positive integer, that content entry will be fetched and the node rendered as a leaf instead of a branch.
+
+The contentID field is not constrained, so one piece of content can be accessed and rendered using different templates depending on where in the project they appear, see \nameref{sec:multipleTemplates} for an example of this behavior.
+
+\begin{figure}[H]
+	\centering
+	\caption{Node Table}
+	\vspace{12pt}
+	\begin{tabular}{ |p{1.25in}|p{.75in}|p{2in}|p{1in}| }
+		\hline
+		\multicolumn{4}{|l|}{\textbf{contentCategory}} \\
+		\hline
+		\hline
+		Name & DataType & Keys & Notes\\
+		\hline
+		id & Int & PK & \\
+		reference & Varchar & Unique & \\
+		contentID & Varchar & Foreign: contentRegistry.id & \\
+		template & Varchar & & \\
+		renderdata & Varchar & & JSON \\
+		\hline
+	\end{tabular}
+\end{figure}
+
+\subsection{Node to Node Table}
+
+As the name implies, the nodeToNode table defines relationship between nodes, specifically a parent child relationship. While individual parent/child relationships can only exist once, a parent can have an unlimited number of children and a child can have an unlimited number of parents. This behavior allows branches of data to be grafted into multiple locations on a site.
+
+\begin{figure}[H]
+	\centering
+	\caption{Node to Node Table}
+	\vspace{12pt}
+	\begin{tabular}{ |p{1.25in}|p{.75in}|p{2in}|p{1in}| }
+		\hline
+		\multicolumn{4}{|l|}{\textbf{nodeToNode}} \\
+		\hline
+		\hline
+		Name & DataType & Keys & Notes\\
+		\hline
+		id & Int & PK & \\
+		parent & Int & Foreign: node.id  \newline
+		               Unique w/ child  & \\
+		child & Int & Foreign: node.id  \newline
+		              Unique w/ parent  & \\
+		sort & Int &  & \\
+		\hline
+	\end{tabular}
+\end{figure}
 
 \chapter{Primary Components}
 
@@ -372,10 +424,29 @@ By default, strict mode is turned on and if the pre-processor is not found or if
 \section{Database Initialization Script}
 \label{sec:dbinit}
 
+For your convenience, we have included a database initialization script in the Install directory at:
+\begin{verbatim}
+    <Bonsai Root Folder>/Install/dbsetup.sql
+\end{verbatim}
+
+Use some caution when running this script, it will drop existing tables if they are present and replace them with the Bonsai tables. The script will also insert some basic default information:
+
+\begin{itemize}
+	\item The default locale \enquote{no-ne}
+	\item The \enquote{BonsaiNode} content type
+	\item The \enquote{Vocab} content type
+	\item The \enquote{Parent} content registry entry (to prevent foreign key conflicts in the Node table)
+	\item The \enquote{Content Not Found} content entry
+	\item An \enquote{index} node to start you on your way to building your first Bonsai Tree
+\end{itemize}
+
 \chapter{Configuration}
 
 \chapter{Common Usage Examples}
 \label{chapter:commonUsageExamples}
+
+\section{Multiple Templates for One Content Entry}
+\label{sec:multipleTemplates}
 
 \section{Dynamic Node Examples}
 \label{sec:dynamicNode}
