@@ -105,22 +105,7 @@ class ContentMapper
 
     public static function resolveConverter($converter)
     {
-        if (empty($converter)) {
-            return false;
-        }
-
-        $userNamespace = Registry::get('converter');
-        $internalNamespace = "\\Bonsai\\Mapper\\Converter\\";
-
-        if (class_exists($userNamespace . $converter)) {
-            return $userNamespace . $converter;
-        } elseif (class_exists($internalNamespace . $converter)) {
-            return $internalNamespace . $converter;
-        } else {
-            Registry::log("Strict Standards: Cannot find $userNamespace$converter or $internalNamespace$converter", __FILE__, __METHOD__, __LINE__);
-        }
-
-        return false;
+        return Registry::resolveClass('converter', $converter, '\\Mapper\\Converter');
     }
 
     /**

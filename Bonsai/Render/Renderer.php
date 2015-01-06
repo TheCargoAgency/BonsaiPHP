@@ -96,12 +96,12 @@ class Renderer
         return $attributes;
     }
 
-    public function printField($data, $properties, $format = '', $process = '', $processargs = array())
+    public function printField($data, $properties, $format = '')
     {
-        print $this->renderField($data, $properties, $format, $process, $processargs);
+        print $this->renderField($data, $properties, $format);
     }
 
-    public function renderField($data, $properties, $format = '', $process = '', $processargs = array())
+    public function renderField($data, $properties, $format = '')
     {
         if (empty($data)) {
             return '';
@@ -112,48 +112,60 @@ class Renderer
         if (!is_array($properties)) {
             $properties = array($properties);
         }
-
-        $process = $this->resolvePreprocessor($process);
-
+        
+        $processed = array();
+        
         foreach ($properties as $propertyKey => $property) {
-            if (empty($data->$property)) {
-                return '';
+            //fetch the name if the property is an array
+            if (is_array($property)){
+                $propertyName = $property[0];
+            }else{
+                $propertyName = $property;
             }
-
-            if ($process && Tools::class_implements($process, 'Bonsai\Render\PreProcess\PreProcess')) {
-                $processor = new $process($data->$property, $processargs);
-                $properties[$propertyKey] = $processor->preProcess();
-                if ($properties[$propertyKey] == null) {
-                    return '';
-                }
-            } else {
-                $properties[$propertyKey] = $data->$property;
+            
+            //check to see if the field exists or, if the reverse flag is set, doesn't exist
+            if(trim($propertyName, '!') == $propertyName){
+                if (empty($data->$propertyName)) { return ''; }
+            }else{
+                $propertyName = trim($propertyName, '!');
+                if (!empty($data->$propertyName)) { return ''; }
+                continue;
+            }
+            
+            if (is_array($property)){
+                $processed[$propertyKey] = $this->preProcess($data, $property);
+            }else{
+                $processed[$propertyKey] = $data->$propertyName;
             }
         }
 
-        $args = array_merge($args, $properties);
+        $args = array_merge($args, $processed);
 
         return call_user_func_array('sprintf', $args);
     }
 
+    protected function preProcess($data, $property){
+        $propertyName = $property[0];
+        $process = !empty($property[1]) ? $this->resolvePreprocessor($property[1]) : false;
+        $processargs = (!empty($property[2]) && is_array($property[2])) ? $property[2] : array();
+
+        if ($process && Tools::class_implements($process, 'Bonsai\Render\PreProcess\PreProcess')) {
+            $processor = new $process($data->$propertyName, $processargs);
+            $processed = $processor->preProcess();
+            
+            if (is_null($processed)) {
+                return '';
+            }else{
+                return $processed;
+            }
+        } else {
+            return $data->$propertyName;
+        }
+    }
+    
     protected function resolvePreprocessor($process)
     {
-        if (empty($process)) {
-            return false;
-        }
-
-        $userNamespace = Registry::get('preProcessor');
-        $internalNamespace = "\\Bonsai\\Render\\PreProcess\\";
-
-        if (class_exists($userNamespace . $process)) {
-            return $userNamespace . $process;
-        } elseif (class_exists($internalNamespace . $process)) {
-            return $internalNamespace . $process;
-        } else {
-            Registry::log("Strict Standards: Cannot find $userNamespace$process or $internalNamespace$process", __FILE__, __METHOD__, __LINE__);
-        }
-
-        return false;
+        return Registry::resolveClass('preProcessor', $process, '\\Render\\PreProcess');
     }
 
     public function fetchPlugins()

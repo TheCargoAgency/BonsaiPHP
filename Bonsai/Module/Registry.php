@@ -185,6 +185,41 @@ class Registry
         return self::getInstance()->bonsaiLog;
     }
 
+    public static function resolveClass($type, $class, $relative = '')
+    {
+        if (empty($class)) {
+            return false;
+        }
+
+        $plugins = Registry::get('plugin');
+        
+        $namespaces = array();
+        $namespaces[] = Registry::get($type);
+        
+        if (!empty($plugins)) {
+            if (!is_array($plugins)) {
+                $plugins = [$plugins];
+            }
+
+            foreach ($plugins as $plugin) {
+                $namespaces[] = "\\$plugin$relative\\";
+            }
+        }        
+        
+        $namespaces[] = "\\Bonsai$relative\\";
+
+        
+        foreach ($namespaces as $namespace){
+            if (class_exists($namespace . $class)) {
+                return $namespace . $class;
+            }
+        }
+        
+        Registry::log("Strict Standards: Cannot find $class in the user namespace or any registered plugins", __FILE__, __METHOD__, __LINE__);
+
+        return false;
+    }
+    
     /**
      * Private constructor to prevent creating a new instance via 'new'
      * @return void
