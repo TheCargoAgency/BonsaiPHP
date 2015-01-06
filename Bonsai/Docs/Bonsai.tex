@@ -6,13 +6,21 @@
 \usepackage[english]{babel}
 \usepackage[autostyle]{csquotes}
 
+\usepackage{upquote}
+
 \usepackage{indentfirst}
 \usepackage{float}
 
 \usepackage{tikz}
 \usepackage{tikz-uml}
+\usetikzlibrary{shapes,arrows}
 
-%\usepackage{minitoc}
+\usepackage{listings}
+
+% Define block styles
+\tikzstyle{block} = [rectangle, draw, fill=blue!20, 
+text width=1.5in, minimum height=4em]
+\tikzstyle{line} = [draw, -latex']
 
 \usepackage{parskip}
 \setlength{\parskip}{6pt}
@@ -280,66 +288,67 @@ For more information consult the \nameref{treeClassDiagram} on page~\pageref{tre
 \begin{figure}[p]
 	\caption{Tree Class Diagram}
 	\label{treeClassDiagram}	
+	\centering
 	\vspace{12pt}
 	\begin{tikzpicture}
 	
 	\umlclass[type=abstract]{Trunk}{
 	}{
-		- getData(array) : stdClass \\
-		- getCachedContent(int, int|null) : str \\
-		- cacheContent(str, int, int|null) \\
-		- getCachePath(int, int|null) : str \\
-		- getCacheFileName(int, int|null) : str \\
-		- getCachePathComponent(int) : str \\
-		\umlstatic{+ isJSON(str) : bool}
+		$-$ getData(array) : stdClass \\
+		$-$ getCachedContent(int, int|null) : str \\
+		$-$ cacheContent(str, int, int|null) \\
+		$-$ getCachePath(int, int|null) : str \\
+		$-$ getCacheFileName(int, int|null) : str \\
+		$-$ getCachePathComponent(int) : str \\
+		\umlstatic{$+$ isJSON(str) : bool}
 	}
 
 	\umlclass[type=interface, x=3.5in]{Tree}{
 	}{
-		+ construct(int|str) \\
-		+ getContent() \\
-		+ public getTreeArray(bool)
+		$+$ construct(int|str) \\
+		$+$ getContent() \\
+		$+$ public getTreeArray(bool)
 	}
 
 	\umlclass[y=-3.125in]{Branch}{
-		- renderer : str \\
-		- children: array \\
-		- conf : array \\
-		- cache : bool \\
-		- cachedContent : str \\
-		- nodeID : int \\
-		- parentID : int \\
-		- bonsaiRenderer : Renderer
+		$-$ renderer : str \\
+		$-$ children: array \\
+		$-$ conf : array \\
+		$-$ cache : bool \\
+		$-$ cachedContent : str \\
+		$-$ nodeID : int \\
+		$-$ parentID : int \\
+		$-$ bonsaiRenderer : Renderer
 	}{
-		+ construct(int|str, bool, Renderer) \\
-		- buildNullNode() \\
-		- addChildren(array) \\
-		- registerViewData(array) \\
-		+ getContent() : str \\
-		+ getTreeArray(bool) : array \\
-		+ getTreeList(bool, bool, bool) : array \\
-		+ parseTreeArray(array, bool, bool) : array \\
-		\umlstatic{+ cleanseOutput(str, array) : str}
+		$+$ construct(int|str, bool, Renderer) \\
+		$-$ buildNullNode() \\
+		$-$ addChildren(array) \\
+		$-$ registerViewData(array) \\
+		$+$ getContent() : str \\
+		$+$ getTreeArray(bool) : array \\
+		$+$ getTreeList(bool, bool, bool) : array \\
+		$+$ parseTreeArray(array, bool, bool) : array \\
+		\umlstatic{$+$ cleanseOutput(str, array) : str}
 	}
 
 
 	\umlclass[x= 3.5in, y=-3.125in]{Leaf}{
-		- renderer : str \\
-		- content: tree \\
-		- conf : array \\
-		- cache : bool \\
-		- cachedContent : str \\
-		- nodeID : int \\
-		- contentOverride : int \\
-		- bonsaiRenderer : Renderer
+		$-$ renderer : str \\
+		$-$ content: tree \\
+		$-$ conf : array \\
+		$-$ cache : bool \\
+		$-$ cachedContent : str \\
+		$-$ nodeID : int \\
+		$-$ contentOverride : int \\
+		$-$ bonsaiRenderer : Renderer
 	}{
-		+ construct(int|str, int, bool, Renderer) \\
-		- buildNullNode() \\
-		- registerViewData(array) \\
-		+ getContent() : str \\
-		+ getContentArray() : array \\
-		+ getContentDataArray(int, int) : array \\
-		+ getTreeArray(bool) : array
+		$+$ construct(int|str, int, bool, Renderer) \\
+		$-$ buildNullNode() \\
+		$-$ registerViewData(array) \\
+		$+$ getContent() : str \\
+		$+$ getContentArray() : array \\
+		$+$ getContentDataArray(int, int) : array \\
+		$+$ getTreeArray(bool) : array
 	}
 	
 	\umlimpl{Tree}{Trunk}
@@ -365,15 +374,17 @@ For a usage example see the \nameref{ExampleRenderCall} on page~\pageref{Example
 	\caption{Example Render Call}
 	\label{ExampleRenderCall}
 	\vspace{12pt}
-	\begin{verbatim}
-	$renderer = new \Bonsai\Render\Renderer(); //Instantiate the object
-    $dataObject = jsonDecode($dataString); //Decode the data json into a stdClass object
-    $contentObject = jsonDecode($contentString); //Decode the content json into a stdClass object
-    $template = 'templatename'; //Set the file name of the render template
-    
-    //Call renderContent to build the output
-    $output = $renderer->renderContent($template, $contentObject, $dataObject);
-	\end{verbatim}
+	\lstset{language=PHP}
+	\begin{lstlisting}
+$renderer = new \Bonsai\Render\Renderer(); //Instantiate the object
+$dataObject = jsonDecode($dataString); //Decode the data json
+$contentObject = jsonDecode($contentString); //Decode the content json
+$template = 'templatename'; //Set the file name of the render template
+ 
+//Call renderContent to build the output
+$output = $renderer->renderContent($template, $contentObject, $dataObject);
+	\end{lstlisting}
+	
 \end{figure}
 
 The render can be extended into a plug-in's namespace to allow access to private templates in plug-in. To access those templates, pass the renderer into the Branch or Leaf on instantiation, if none is provided the core renderer will be instantiated when needed.
@@ -392,32 +403,79 @@ Pre-processors are resolved in the following order:
 	\item Class found in the Bonsai Core's PreProcess namespace
 \end{enumerate}
 
-It will use the first valid preprocessor it discovers that implements the \textbackslash Bonsai\textbackslash Renderer\textbackslash PreProcess\textbackslash PreProcess interface.
+It will use the first preprocessor it discovers that implements the \textbackslash Bonsai\textbackslash Renderer\textbackslash PreProcess\textbackslash PreProcess interface.
 
-By default, strict mode is turned on and if the pre-processor is not found or if it does not implement the correct interface it will throw a \nameref{sec:bonsaiStructExecption}. If strict mode has been turned off, it will continue checking if it encounters an invalid pre-processor and if no pre-processor is found, pre-processing will be skipped.
+By default, strict mode is turned on and if the pre-processor is not found or if it does not implement the correct interface it will throw a \nameref{sec:bonsaiStrictExecption}. If strict mode has been turned off, it will continue checking if it encounters an invalid pre-processor and if no pre-processor is found, pre-processing will be skipped.
 
 \subsection{Templates}
 
+Templates are the mechanism by which the abstract data structures defined in the database are rendered into production-ready code.
 
+Like the Preprocessors they are resolved by priority and the renderer will use the first compatible file it encounters.
+
+Templates are resolved in the following order:
+
+\begin{enumerate}
+	\item Templates found in the user-specified templates folder
+	\item Templates found in the plugins' templates folders in the order they are listed in the config file
+	\item Templates found in the Bonsai Core's Templates folder
+\end{enumerate}
+
+If one of the standard included templates does not meet your needs, you can simply copy it to your templates folder and modify it accordingly. Your version will then supersede the Bonsai version.
 
 \section{Modules}
 
+Modules are a sort of catch-all repository for support classes that allow the primary behaviors of Bonsai to operate normally. This is where non-tree related tools and support functions.
+
 \subsection{Registry}
+
+The Bonsai Registry is a singleton class that stores the configuration settings and provides access to any items that have a high cost of instantiation.
+
+It can be initialized with the user's config file or it will auto-initialize automatically on access. The only settable feature is the script locale, but this becomes read-only once set. For additional information see the chapter on \nameref{chap:Configuration}.
 
 \subsection{Vocab}
 
+Vocab copy
+
 \subsection{Callback}
+
+Callback copy
 
 \subsection{Tools}
 
+Tools copy
+
 \section{Content Mapper}
+
+Content Mapper copy
 
 \subsection{Converters}
 
+Converters copy
+
 \section{Exceptions}
 
+Bonsai does not presume to handle most exceptions on its own, it merely throws the exception to allow the developer control over how it is handled. Some common recoverable errors are controlled by the \enquote{strict} option in the configuration file, which is set to true by default. This gives the user the option of allowing Bonsai to handle these situations if they so choose. These errors will throw the \nameref{sec:bonsaiStrictExecption} unless the strict flag is set to false.
+
 \subsection{Bonsai Strict Exception}
-\label{sec:bonsaiStructExecption}
+\label{sec:bonsaiStrictExecption}
+
+A Bonsai Strict Exception is thrown when the \enquote{strict} option in the configuration is set to true, even if there is a resolution available. The strict option essentially denies Bonsai the ability to make a \enquote{guess} when it encounters something that isn't quite right, allowing the developer to locate otherwise recoverable errors.
+
+This exception is called as part of the Registry::log method, if the strict option is not set, these errors are recorded in the registry's internal log and can be accessed with the Registry::getLog() method.
+
+\subsection{Bonsai General Exception}
+\label{sec:bonsaiGeneralExecption}
+
+A Bonsai General Exception is thrown in any situation where no prescribed resolution is found.
+
+\subsection{Renderer Exception}
+\label{sec:renderExecption}
+
+A render exception will be thrown if the renderer encounters a situation that it cannot recover from. For example, if a specified template is missing and the default fall-back template cannot be found.
+
+\subsection{Query Builder Exception}
+\label{sec:queryBuilderExecption}
 
 \chapter{Installation}
 
@@ -441,6 +499,93 @@ Use some caution when running this script, it will drop existing tables if they 
 \end{itemize}
 
 \chapter{Configuration}
+\label{chap:Configuration}
+
+\section{Configuration File}
+All user-configurable options are located in the Bonsai configuration file. It is located in the Config directory at:
+\begin{verbatim}
+<Bonsai Root Folder>/Config/config.ini
+\end{verbatim}
+
+Because Bonsai is generally distributed as a package, it is not advised that this configuration file be modified directly. Instead you can superimpose your own configuration file over top of the default one by manually initializing the registry.
+
+If no initialization is called, the registry will auto-initialize when it is first accessed. Re-initialization is not permitted so your initialization should occur before you instantiate any Bonsai object.
+
+\begin{figure}[H]
+	\caption{Initialization of the Registry with User Config File}
+	\label{ExampleRenderCall}
+	\vspace{12pt}
+	\lstset{language=PHP}
+	\begin{lstlisting}
+use \Bonsai\Module\Registry;
+
+/* Initialize the registry using this file, 
+   relative to the \Bonsai\DOCUMENT_ROOT constant */
+Registry::getInstance()->initialize('myconfig/config.ini');
+	\end{lstlisting}
+\end{figure}
+
+Note that this initialization does not replace the default config with the user config, but rather merges the two with the user config having preference. As a result, it is only necessary to include settings you with to modify in your configuration file.
+
+\begin{figure}[H]
+	\caption{Tree Class Diagram}
+	\label{treeClassDiagram}	
+	\vspace{12pt}
+	\centering
+	\begin{tikzpicture}
+	% Place nodes
+	\node [block] (bonsaiconf) {
+		;Bonsai Config \\
+		\vspace{6pt}
+		setting1 = value1 \\
+		setting2[ ] = value2a \\
+		setting2[ ] = value2b \\
+		setting3 = value3 \\
+	};
+	\node [block, right of=bonsaiconf, node distance=2in] (userconf) {
+		;User Config \\
+		\vspace{6pt}
+		setting2[ ] = value2c \\
+		setting3 = value3 \\
+	};
+	\node [block, right of=userconf, node distance=2in] (compconf) {
+		;Composite Config \\
+		\vspace{6pt}
+		setting1 = value1 \\
+		setting2[ ] = value2c \\
+		setting3 = value3 \\
+	};
+	
+	% Draw edges
+	\path [line] (bonsaiconf) -- (userconf);
+	\path [line] (userconf) -- (compconf);	    
+	\end{tikzpicture}
+	
+	\vspace{12pt}
+	
+\end{figure}
+
+Note that any arrays in your configuration will completely supersede the default config. This allows you to effectively remove values you do not want to include, but you must re-assign any values you want to keep from the default configuration when dealing with arrays.
+
+\section{Location Constants}
+
+Bonsai uses a handful of location constants to locate files and correctly handle relative locations. These are defined in the Bonsai.php file in the Bonsai root. By default they are defined as:
+
+\begin{verbatim}
+	    Bonsai\DOCUMENT_ROOT >> $_SERVER['DOCUMENT_ROOT']
+	    Bonsai\PROJECT_ROOT  >> Location of the Bonsai.php file
+	    Bonsai\SERVER_ROOT   >> Emtpy string
+\end{verbatim}
+
+These are used, respectively, to:
+
+\begin{itemize}
+	\item Locate user template and configuration files
+	\item Locate bonsai template and configuration files
+	\item Correctly prefix links that are stated relative to the server root
+\end{itemize}
+
+Depending on your server configuration, you may need to manually define one or more of these values before instantiating Bonsai, otherwise these values will be used for any un-defined constants when the Bonsai core initializes.
 
 \chapter{Common Usage Examples}
 \label{chapter:commonUsageExamples}
