@@ -5,6 +5,7 @@ namespace Bonsai\Module;
 use Bonsai\Model\Query\Select;
 use Bonsai\Model\Query\Condition;
 use Bonsai\Exception\BonsaiException;
+use Bonsai\Exception\BonsaiStrictException;
 
 /**
  * Registry for settings related to the Bonsai
@@ -110,6 +111,10 @@ class Registry
 
     public function setLocale($locale)
     {
+        if (!is_null($this->localeID)){
+            throw new BonsaiException("The locale of the script cannot be modified after it has been initialized.");
+        }
+        
         $select = new Select();
 
         $columns = array(
@@ -174,7 +179,7 @@ class Registry
     public static function log($message, $file, $method, $line)
     {
         if (self::get('strict')) {
-            throw new \Bonsai\Module\BonsaiStrictException($message);
+            throw new BonsaiStrictException($message);
         }
         
         self::getInstance()->addLog($message, $file, $method, $line);
