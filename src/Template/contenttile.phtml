@@ -102,9 +102,6 @@ if (is_object($content)):
 
     <<?= $wrappertag . $this->getAttributes($data, ['id', 'class']) ?> <?= $this->getEditData($data) ?>>
     <?php
-    $innerclass = !empty($data->innerclass) ? " {$data->innerclass}" : '';
-    print empty($data->inner) ? "" : '<div class="inner clearfix' . $innerclass . '">';
-    $this->printField($content, 'innerWrapper', '<div class="%s">');
     $this->printField($content, 'link', '<a href="%s" target="' . $data->target . '">');
     print $imageposition == 1 ? $image : '';
     $this->printField($content, 'title', "<h{$htop}" . $this->getAttributes($data, ['data-title']) . ">%s</h{$htop}>");
@@ -121,9 +118,7 @@ if (is_object($content)):
     $this->printField($content, ['calloutlink', 'callout'], '<div class="callout-wrapper"><a class="callout" href="%s">%s</a></div>');
 
     $this->printField($content, 'link', '</a>');
-    $this->printField($content, 'innerWrapper', '</div>');
 
-    print empty($data->inner) ? "" : '</div>';
     ?>
     </<?= $wrappertag ?>>
 
