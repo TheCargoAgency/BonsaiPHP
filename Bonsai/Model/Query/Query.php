@@ -8,6 +8,10 @@ class Query
 {
 
     const SELECT = 'SELECT ';
+    const INSERT = 'INSERT ';
+    const INTO = 'INTO ';
+    const ON_DUP = ' ON DUPLICATE KEY UPDATE ';
+    const VALUES = ' VALUES ';
     const ALL_FIELDS = '* ';
     const FIELD_SEPARATOR = ', ';
     const FROM = 'FROM ';
