@@ -11,8 +11,6 @@ use Bonsai\Module\Callback;
 use Bonsai\Model;
 use Bonsai\Render\Renderer;
 
-require_once __DIR__ . '/Bonsai.php';
-
 /**
  * Leaf container
  */

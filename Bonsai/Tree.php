@@ -6,8 +6,6 @@
 
 namespace Bonsai;
 
-require_once __DIR__ . '/Bonsai.php';
-
 /**
  * Base interface for a node and leaf content structure.
  */

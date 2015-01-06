@@ -11,8 +11,6 @@ use Bonsai\Module\Callback;
 use Bonsai\Render\Renderer;
 use Bonsai\Permissions;
 
-require_once __DIR__ . '/Bonsai.php';
-
 /**
  * Bonsai Tree Base class
  */

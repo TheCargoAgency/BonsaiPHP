@@ -66,6 +66,8 @@ class Registry
         if ($this->init) {
             return $this;
         }
+        
+        $this->defineConstants();
 
         $defaultConfigFile = constant(self::PROJECT_NAMESPACE . "\\PROJECT_ROOT") . '/' . self::DEFAULT_INI;
         if (!file_exists($defaultConfigFile)) {
@@ -88,6 +90,12 @@ class Registry
         $this->init = true;
 
         return $this;
+    }
+    
+    private function defineConstants(){
+        defined('Bonsai\DOCUMENT_ROOT') || define('Bonsai\DOCUMENT_ROOT', $_SERVER['DOCUMENT_ROOT']);
+        defined('Bonsai\PROJECT_ROOT') || define('Bonsai\PROJECT_ROOT', __DIR__ . '/../');
+        defined('Bonsai\SERVER_ROOT') || define('Bonsai\SERVER_ROOT', '');
     }
 
     public function __get($name)

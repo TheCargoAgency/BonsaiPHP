@@ -44,14 +44,14 @@ class Renderer
         $files = array();
         $templates = array();
 
-        $files[] = $basename . self::TEMPLATE_EXT;
-        $files[] = Registry::get('defaultTemplate') . self::TEMPLATE_EXT;
+        $files[] = $basename . static::TEMPLATE_EXT;
+        $files[] = Registry::get('defaultTemplate') . static::TEMPLATE_EXT;
 
         $templates[] = \Bonsai\DOCUMENT_ROOT . '/' . Registry::get('renderTemplateLocation') . '/';
         
-        self::fetchPluginTemplates($templates);
+        static::fetchPluginTemplates($templates);
         
-        $templates[] = \Bonsai\PROJECT_ROOT . '/' . self::TEMPLATE_PATH . '/';
+        $templates[] = \Bonsai\PROJECT_ROOT . '/' . static::TEMPLATE_PATH . '/';
 
         foreach ($files as $file) {
             foreach ($templates as $template) {
@@ -78,7 +78,7 @@ class Renderer
 
     public static function getEditData($data)
     {
-        return self::getAttributes($data, array(self::CONTENT_EDIT, self::NODE_EDIT));
+        return static::getAttributes($data, array(static::CONTENT_EDIT, static::NODE_EDIT));
     }
 
     public static function getAttributes($data, $attrs = array())

@@ -86,7 +86,7 @@ class ContentMapper
         if (count($command)) {
             $function = array_shift($command);
 
-            $function = self::resolveConverter($function);
+            $function = static::resolveConverter($function);
 
             if (!empty($function) && Tools::class_implements($function, 'Bonsai\Mapper\Converter\Converter')) {
                 $r = new \ReflectionClass($function);
