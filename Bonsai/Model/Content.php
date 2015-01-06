@@ -96,5 +96,50 @@ class Content
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+    
+    public static function indateContentRegistry($reference, $contentTypeID, $dataFormat = null, $contentCategoryID = 0, $startDate = null, $endDate = null, $active = null){
+        $indate = \Bonsai\Model\Query\Indate::create();
 
+        $indate->table(Registry::get('contentRegistry'))
+            ->addKeyField(Registry::get('contentRegistry.reference'), $indate->pdo('reference', $reference))
+            ->addField(Registry::get('contentRegistry.contentTypeID'), $indate->pdo('contentTypeID', $contentTypeID))
+            ->addField(Registry::get('contentRegistry.dataFormat'), $indate->pdo('dataFormat', $dataFormat))
+            ->addField(Registry::get('contentRegistry.contentCategoryID'), $indate->pdo('contentCategoryID', $contentCategoryID));
+
+        if (Registry::get('contentByDate') && !is_null($startDate)){
+            $indate->addField(Registry::get('contentRegistry.startDate'), $indate->pdo('startDate', $startDate));
+        }
+
+        if (Registry::get('contentByDate') && !is_null($endDate)){
+            $indate->addField(Registry::get('contentRegistry.endDate'), $indate->pdo('endDate', $endDate));
+        }
+        
+        if (Registry::get('contentByActive') && !is_null($active)){
+            $indate->addField(Registry::get('contentRegistry.active'), $indate->pdo('active', $active));
+        }
+
+        $pdo = Registry::pdo();
+        
+        $stmt = $pdo->prepare($indate);
+        $stmt->execute($indate->getValues());
+
+        return $pdo->lastInsertId();
+    }
+
+    public static function indateContent($contentRegistryID, $content, $localeID = 0){
+        $indate = \Bonsai\Model\Query\Indate::create();
+
+        $indate->table(Registry::get('content'))
+            ->addKeyField(Registry::get('content.id'), $indate->pdo('crid', $contentRegistryID))
+            ->addKeyField(Registry::get('content.localeID'), $indate->pdo('lid', $localeID = 0))
+            ->addField(Registry::get('content.content'), $indate->pdo('content', $content));
+
+        $pdo = Registry::pdo();
+        
+        $stmt = $pdo->prepare($indate);
+        $stmt->execute($indate->getValues());
+
+        return $pdo->lastInsertId();
+    }    
+    
 }

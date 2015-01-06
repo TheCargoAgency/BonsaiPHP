@@ -103,4 +103,37 @@ class Node
         return $stmt->fetchAll();
     }
 
+    public static function indateNode($reference, $template, $renderdata, $contentID = 0){
+        $indate = \Bonsai\Model\Query\Indate::create();
+
+        $indate->table(Registry::get('node'))
+            ->addKeyField(Registry::get('node.reference'), $indate->pdo('reference', $reference))
+            ->addField(Registry::get('node.contentid'), $indate->pdo('contentid', $contentID))
+            ->addField(Registry::get('node.template'), $indate->pdo('template', $template))
+            ->addField(Registry::get('node.renderdata'), $indate->pdo('renderdata', $renderdata));
+        
+        $pdo = Registry::pdo();
+        
+        $stmt = $pdo->prepare($indate);
+        $stmt->execute($indate->getValues());
+
+        return $pdo->lastInsertId();
+    }    
+
+    public static function indateNodeToNode($parent, $child, $sort = null){
+        $indate = \Bonsai\Model\Query\Indate::create();
+
+        $indate->table(Registry::get('nodetonode'))
+            ->addKeyField(Registry::get('nodetonode.parent'), $indate->pdo('parent', $parent))
+            ->addKeyField(Registry::get('nodetonode.child'), $indate->pdo('child', $child))
+            ->addField(Registry::get('nodetonode.sort'), $indate->pdo('sort', $sort));
+        
+        $pdo = Registry::pdo();
+        
+        $stmt = $pdo->prepare($indate);
+        $stmt->execute($indate->getValues());
+
+        return $pdo->lastInsertId();
+    }    
+    
 }
