@@ -1,8 +1,5 @@
-<div<?= $this->getAttributes($data, array('id', 'class', 'data-type')) ?> <?= $this->getEditData($data) ?>>
+<div<?= $this->getAttributes($data, array('id', 'class')) ?> <?= $this->getEditData($data) ?>>
     <?php
-    $innerclass = !empty($data->innerclass) ? " {$data->innerclass}" : '';
-    echo empty($data->inner) ? "" : '<div class="inner' . $innerclass . '">';
     echo is_object($content) ? $content->content : $content;
-    echo empty($data->inner) ? "" : '</div> ';
     ?>
 </div>
