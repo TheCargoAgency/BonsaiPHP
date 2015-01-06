@@ -1,0 +1,24 @@
+{
+    "name": "cargo/bonsai-php",
+    "type": "library",
+    "description": "Lightweight content storage and retrieval with localization support.",
+    "keywords": ["cms", "bonsai", "localization"],
+    "homepage": "https://github.com/TheCargoAgency/BonsaiPHP",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Andy Benedict",
+            "email": "dev@andybenedict.com",
+            "role": "Lead Developer"
+        }        
+    ],
+    "require": {
+        "php": ">=5.4",
+        "ext-mbstring": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Bonsai\\": "src/"
+        }
+    }
+}
