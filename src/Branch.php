@@ -68,10 +68,10 @@ class Branch extends Trunk
         if (count($children) == 0 && !Registry::get('autoPrune')) {
             $this->buildNullNode();
             return;
+        }elseif(count($children)){
+            $this->addChildren($children);
+            $this->registerViewData($children[0]);
         }
-
-        $this->addChildren($children);
-        $this->registerViewData($children[0]);
     }
 
     protected function buildNullNode()
@@ -147,6 +147,10 @@ class Branch extends Trunk
      */
     public function getTreeArray($withContent = false)
     {
+        if (!isset($this->reference)){
+            return null;
+        }
+        
         $tree = array();
 
         $tree['node'] = $this->nodeID;

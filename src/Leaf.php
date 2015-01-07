@@ -72,7 +72,7 @@ class Leaf extends Trunk
         $this->data = $this->getData($content);
     }
 
-    public static function getContentDataArray($nodeID, $contentOverride)
+    public static function getContentDataArray($nodeID, $contentOverride = false)
     {
         $leaf = new leaf($nodeID, $contentOverride, false);
         return $leaf->getContentArray();
