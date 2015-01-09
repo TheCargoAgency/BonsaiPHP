@@ -188,9 +188,11 @@ class Renderer
     
     protected function fetchPluginTemplates(&$templates)
     {
-        $renderer = new Renderer();
+        $registry = Registry::getInstance();
         
-        foreach ($renderer->plugins as $pluginNamespace => $plugin){
+        foreach ($registry->plugin as $pluginNamespace){
+            $plugin = "\\{$pluginNamespace}\\Module\\Registry";
+            $plugin = $plugin::getInstance();
             $authorizedRenderers = $plugin->renderTemplate;
             if(is_array($authorizedRenderers)){
                 if (in_array(get_class($this), $authorizedRenderers)){
