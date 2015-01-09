@@ -204,4 +204,59 @@ class Renderer
         }
     }
 
+    public function getSchema($filename)
+    {
+        return $this->getConfig($filename, 'jsonSchema');
+    }
+
+    public function getSchemaList($allFiles = false)
+    {
+        $schemas = array();
+
+        $templates = array();
+
+        $templates[] = \Bonsai\DOCUMENT_ROOT . '/' . Registry::get('renderTemplateLocation') . '/';
+        static::fetchPluginTemplates($templates);
+        $templates[] = \Bonsai\PROJECT_ROOT . '/' . static::TEMPLATE_PATH . '/';
+
+        foreach ($templates as $template){
+            foreach (glob( "$template*" . static::TEMPLATE_EXT ) as $filepath) {
+                $filename = basename($filepath,".phtml");
+                if ($this->getSchema($filename) || $allFiles){
+                    if (!isset($schemas[$filename])){
+                        $schemas[$filename] = $filename;
+                    }
+                }
+            }
+        }
+
+        return $schemas;
+    }
+
+    public function getConfig($filename, $property)
+    {
+        $file = $this->getRenderFile($filename);
+        
+        $docComments = array_filter(
+            token_get_all( file_get_contents( $file ) ), function($entry) {
+                return $entry[0] == T_DOC_COMMENT;
+            }
+        );
+
+        foreach ($docComments as $fileDocComment){
+            $fileDocComment = $fileDocComment[1];
+            if (preg_match('/^\/\*\*\\s+@' . $property . '/', $fileDocComment)){
+                $commentbits = explode("\n", $fileDocComment);
+                foreach ($commentbits as $bitkey => $bit){
+                    $commentbits[$bitkey] = preg_replace('/(^\s*\/\*\*\\s+@' . $property . ')|(^\s+\*\/)|(^\s*\*\s)/', '', $bit);
+                }
+                $fileDocComment = implode("\n", $commentbits);
+
+                return trim($fileDocComment);
+            }
+        }
+
+        return false;
+    }    
+    
 }
